@@ -5,7 +5,7 @@ services:
   mongo:
     image: mongo
     restart: always
-    container_name: mongodb_depo
+    container_name: mongodb
     ports:
         - "27017:27017"
     environment:
@@ -16,7 +16,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile.dev
-    container_name: wsvc-depo-mongod
+    container_name: wsvc-mongod
     ports:
       - "3001:3001"
     command: npm start
