@@ -1,5 +1,4 @@
 // Dependencies
-const fastify = require("fastify");
 const cookie = require("fastify-cookie");
 const cors = require("fastify-cors");
 const { jwt } = require("./app/config/jwtconfig");
@@ -11,7 +10,7 @@ import { SessionChecker } from "./app/modules/middleware/SessionChecker";
 import { config } from "./app/config/config";
 import { router } from "./app/modules/routes";
 import { LogController } from "./app/modules/controller/LogController";
-import { FastifyReply } from "fastify";
+import fastify, { FastifyReply } from "fastify";
 
 import { CryptoJsHandler } from "./app/modules/util/CryptoJsHandler.js";
 
