@@ -168,7 +168,7 @@ export abstract class AbstractMongoDBEntity implements MongoDBEntity {
    * @return
    */
   async findAll<T>(
-    filters?: IQueryFilters,
+    filters: IQueryFilters = {},
     options?: CollectionAggregationOptions,
     callback?: MongoCallback<AggregationCursor<any>>
   ): Promise<T[]> {
@@ -245,14 +245,14 @@ export abstract class AbstractMongoDBEntity implements MongoDBEntity {
   protected parseFilters(filters: IQueryFilters): Array<any> {
     const aggregation = [] as any;
 
-    if (filters.orderBy.length)
+    if (filters.orderBy?.length)
       aggregation.push({
         $sort: {
           [filters.orderBy]: filters.direction === "DESC" ? -1 : 1,
         },
       });
 
-    if (filters.filters.length) {
+    if (filters.filters?.length) {
       const matches = [];
       filters.filters.forEach((item) => {
         matches.push({

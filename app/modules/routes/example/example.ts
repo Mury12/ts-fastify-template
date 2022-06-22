@@ -21,7 +21,11 @@ export const get = async (req, res) => {
  * @param {*} req
  * @param {*} res
  */
-export const getAll = async (req, res) => {};
+export const getAll = async (req, res) => {
+  const ctl = new ExampleController();
+  const result = await ctl.findAll();
+  res.send(result);
+};
 /**
  * Inserts a new row into DB
  * @param {*} req
