@@ -1,0 +1,11 @@
+**/node_modules
+**/dist
+.env
+*-local*
+**/logs/*.*
+dbaconfig.ts*
+**/.ssh/*
+
+venv
+cdk.out
+__pycache__
