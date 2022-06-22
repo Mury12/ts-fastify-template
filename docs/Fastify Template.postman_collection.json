@@ -31,6 +31,35 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Mongo Example",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/example",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"example"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
