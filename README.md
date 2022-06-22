@@ -35,8 +35,7 @@ class MyController extends AbstractMongoDBEntity {
  }
 
  async getCertainDocument(){
-     const dbm = this.mongodb.connect();
-     const collection = dbm.collection(this.table);
+     const collection = this.mongo.collection(this.table);
      const result = await collection.findAll();
      this.disconnect();
      return result;
