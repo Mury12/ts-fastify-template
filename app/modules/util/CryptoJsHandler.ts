@@ -1,6 +1,4 @@
-import * as fs from "fs";
-import { createHash, createDecipheriv, createCipheriv } from "crypto";
-import { config } from "../../config/config";
+import { createHash, createDecipheriv, createCipheriv } from 'crypto';
 
 /**
  * This is the CryptoJS default handler.
@@ -32,7 +30,7 @@ export class CryptoJsHandler {
   private passwordFilePath: string;
   private resizedIV: Buffer;
 
-  constructor(passwordFilePath = "app/.ssh/crypto-js") {
+  constructor(passwordFilePath = 'app/.ssh/crypto-js') {
     this.passwordFilePath = passwordFilePath;
     this.setup();
   }
@@ -49,7 +47,7 @@ export class CryptoJsHandler {
    */
   private createIV() {
     this.resizedIV = Buffer.allocUnsafe(16);
-    const iv = createHash("sha256").update("hashediv").digest();
+    const iv = createHash('sha256').update('hashediv').digest();
     iv.copy(this.resizedIV);
   }
 
@@ -61,21 +59,21 @@ export class CryptoJsHandler {
    * @returns the decrypted data
    */
   private _(str: string, fn: Function, secret?: string): string {
-    if (["createCipheriv", "createDecipheriv"].includes(fn.name)) {
+    if (['createCipheriv', 'createDecipheriv'].includes(fn.name)) {
       // To encoding
-      const _a = fn.name === "createCipheriv" ? "hex" : "binary";
+      const _a = fn.name === 'createCipheriv' ? 'hex' : 'binary';
       // From encoding
-      const _c = _a === "hex" ? "binary" : "hex";
+      const _c = _a === 'hex' ? 'binary' : 'hex';
 
-      const _k = createHash("sha256")
+      const _k = createHash('sha256')
         .update(secret ?? this.secret)
         .digest();
 
-      const _$e = fn("aes256", _k, this.resizedIV);
+      const _$e = fn('aes256', _k, this.resizedIV);
       const _r = [_$e.update(str, _c, _a)];
 
       _r.push(_$e.final(_a));
-      return _r.join("");
+      return _r.join('');
     }
     throw new TypeError("Crypher IV function doens't match the action.");
   }
@@ -85,7 +83,7 @@ export class CryptoJsHandler {
    */
   private readPasswordFile() {
     try {
-      this.secret = config.jwt.secret;
+      this.secret = 'config.jwt.secret';
     } catch (error) {
       console.log(error);
     }

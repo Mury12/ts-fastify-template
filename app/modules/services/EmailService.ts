@@ -1,5 +1,5 @@
-import * as mailgun from "mailgun-js";
-import { config } from "../../config/config";
+import * as mailgun from 'mailgun-js';
+import { config } from '../../config/config';
 
 export class EmailService {
   api = {
@@ -7,10 +7,10 @@ export class EmailService {
     domain: config.mailer.domain,
   };
   config = {
-    from: "",
-    to: "",
-    subject: "",
-    html: "",
+    from: '',
+    to: '',
+    subject: '',
+    html: '',
   };
 
   constructor({ from, to, subject, html }) {
@@ -18,7 +18,7 @@ export class EmailService {
     if (errors) throw new Error(errors);
 
     this.config = {
-      from: `The DePo <${from}>`,
+      from: `MyCompany <${from}>`,
       to,
       subject,
       html,
@@ -28,7 +28,7 @@ export class EmailService {
   send() {
     return new Promise((resolve, reject) => {
       try {
-        const mg = mailgun(this.api);
+        const mg = mailgun.default(this.api);
         mg.messages().send({ ...this.config }, (error, info) => {
           if (error) return reject(error);
           return resolve(info);
@@ -39,12 +39,12 @@ export class EmailService {
     });
   }
 
-  hasErrors(from, to, subject, html) {
+  hasErrors(from: string, to: string, subject: string, html: string) {
     const errors = [];
-    if (!from) errors.push("from");
-    if (!to) errors.push("to");
-    if (!subject) errors.push("subject");
-    if (!html) errors.push("html");
+    if (!from) errors.push('from');
+    if (!to) errors.push('to');
+    if (!subject) errors.push('subject');
+    if (!html) errors.push('html');
     if (errors.length) {
       return `EmailService: Properties are missing: "${errors.join('", "')}"`;
     }
