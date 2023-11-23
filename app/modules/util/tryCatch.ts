@@ -1,5 +1,5 @@
 import { config } from "../../config/config";
-import { LogController } from "../controller/LogController";
+import { LogController } from "../controller/Log.controller";
 
 /**
  * Standarizes a try catch statement

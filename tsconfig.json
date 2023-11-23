@@ -1,5 +1,26 @@
 {
-  "compileOnSave": true,
-  "typeAcquisition": {
-  }
+  "compilerOptions": {
+    "lib": ["es2020"],
+    "module": "commonjs",
+    "target": "es2020",
+    "outDir": "./.dist",
+    "declaration": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "exclude": [
+    "**/tsconfig.*",
+    "**/.dist",
+    "**/config",
+    "**/config/*",
+    "**/scripts",
+    "**/scripts/*",
+    "node_modules",
+    "./node_modules",
+    "./node_modules/*",
+    "./node_modules/@types/node/index.d.ts"
+  ],
+  "include": ["app/**/*.ts", "app/modules/scripts/seed-settings.ts"],
+  "files": ["app/server.ts"]
 }

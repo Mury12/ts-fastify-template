@@ -1,6 +1,6 @@
-import * as fs from "fs";
-import * as moment from "moment";
-import { config } from "../../config/config";
+import * as fs from 'fs';
+import moment from 'moment';
+import { config } from '../../config/config';
 
 /**
  * Saves logs to a file
@@ -23,18 +23,19 @@ import { config } from "../../config/config";
  * }
  */
 export class Logger {
+  private static ignoreEnv = false;
   data: any;
-  defaultPath = "app/logs";
-  fullPath = "";
-  route = "/";
+  defaultPath = 'app/logs';
+  fullPath = '';
+  route = '/';
   file = {
-    action: "actions.json",
-    error: "errors.json",
+    action: 'actions.json',
+    error: 'errors.json',
   };
-  type: "error" | "action";
+  type: 'error' | 'action';
 
   constructor(
-    type: "error" | "action",
+    type: 'error' | 'action',
     route?: string,
     data?: any,
     defaultPath?: any
@@ -53,14 +54,14 @@ export class Logger {
    */
   save(): boolean {
     if (config.logging) {
-      const log = JSON.parse(fs.readFileSync(this.fullPath).toString() || "[]");
+      const log = JSON.parse(fs.readFileSync(this.fullPath).toString() || '[]');
       log.push({ ...this.data, time: moment(), route: this.route });
 
       try {
         fs.writeFileSync(this.fullPath, JSON.stringify(log));
         return true;
       } catch (err) {
-        console.log(err);
+        Logger.error(err);
         return !!!err;
       }
     }
@@ -71,7 +72,7 @@ export class Logger {
    * Set log type to action or error
    * @param {string} type
    */
-  setType(type: "error" | "action") {
+  setType(type: 'error' | 'action') {
     this.type = type;
     this.fullPath = `${this.defaultPath}/${this.file[type]}`;
     return this;
@@ -88,9 +89,9 @@ export class Logger {
 
   clearAll() {
     Object.keys(this.file).map((file) => {
-      fs.writeFileSync(`${this.defaultPath}/${this.file[file]}`, "[]");
+      fs.writeFileSync(`${this.defaultPath}/${this.file[file]}`, '[]');
     });
-    this.setData({ action: "cleared logs" });
+    this.setData({ action: 'cleared logs' });
     return this;
   }
 
@@ -102,5 +103,35 @@ export class Logger {
   show(): Array<any> {
     const log = JSON.parse(fs.readFileSync(this.fullPath).toString());
     return log;
+  }
+
+  private static _log(...args: any[]) {
+    if (config.logging || this.force || this.ignoreEnv) console.log(...args);
+    this.ignoreEnv = false;
+  }
+
+  static log(...args: any[]) {
+    this._log('\x1b[92m[LOG]\x1b[0m', ...args);
+  }
+
+  static error(message: string, ...optionalParams: any[]) {
+    this._log('\x1b[31m[ERROR]\x1b[0m', message, ...optionalParams);
+  }
+
+  static info(message: string, ...optionalParams: any[]) {
+    this._log('\x1b[96m[INFO]\x1b[0m', message, ...optionalParams);
+  }
+
+  static debug(message: string, ...optionalParams: any[]) {
+    this._log('\x1b[93m[DEBUG]\x1b[0m', message, ...optionalParams);
+  }
+
+  static warn(message: string, ...optionalParams: any[]) {
+    this._log('\x1b[93m[WARN]\x1b[0m', message, ...optionalParams);
+  }
+
+  static get force() {
+    this.ignoreEnv = true;
+    return Logger;
   }
 }

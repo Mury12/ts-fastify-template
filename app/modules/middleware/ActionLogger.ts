@@ -7,7 +7,7 @@ import { config } from "../../config/config";
  * @param {*} res
  * @param {*} done
  */
-export const ActionLogger = (req, res, done) => {
+export const ActionLogger = (req, res) => {
   if (config.logging) {
     config.__logPool.push({
       type: "ACTION_LOGGER",
@@ -18,6 +18,5 @@ export const ActionLogger = (req, res, done) => {
         session: req.session,
       },
     });
-    done();
   }
 };

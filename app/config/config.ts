@@ -1,44 +1,76 @@
-import { Db } from "mongodb";
-import { MongoDBService } from "../modules/services/MongoDB";
+import { RedisClient } from '../modules/controller/Redis.controller';
+// import { PrismaClient } from 'prisma/prisma-client';
+import { Logger } from '../modules/services/Logger';
+import { NodeOptions } from '@sentry/node';
 
-if (process.env && !process.env.ENV?.match(/prod|stag/gi)) {
-  const dotenv = require("dotenv");
+if (process.env) {
+  const dotenv = require('dotenv');
   dotenv.config();
 }
 
 const config = {
-  io: null,
   __logPool: [],
-
-  env: process.env.ENV || "staging",
-  logging: process.env.LOGGING && process.env.LOGGING === "true" ? true : false,
+  env: process.env.NODE_ENV || 'development',
+  logging: process.env.LOGGING && process.env.LOGGING === 'true' ? true : false,
   logLevel:
     process.env.LOG_LEVEL ||
-    ("error-only" as "error-only" | "action-only" | "any"),
-  mongodb: {
-    host: process.env["MONGODB_HOST"],
-    database: "MyDocument",
-    username: process.env["MONGODB_USER"],
-    password: process.env["MONGODB_PASSWORD"],
-    port: process.env["MONGODB_PORT"],
-    instance: null as Db,
+    ('error-only' as 'error-only' | 'action-only' | 'any'),
+  sentry: {
+    dsn: process.env.SENTRY_DSN || '',
+    enabled: false,
+    tracesSampleRate: +process.env.SENTRY_SAMPLE_RATE || 1.0,
+    environment: process.env.NODE_ENV || 'development',
+  } as NodeOptions,
+  // prisma: {
+  //   instance: null as PrismaClient,
+  //   maxTries: 5,
+  //   createInstance: async (tryCount = 1) => {
+  //     Logger.log('Trying to connect to Postgres. Counter: ', tryCount);
+  //     if (config.prisma.instance) return;
+
+  //     try {
+  //       config.prisma.instance = new PrismaClient({
+  //         log: config.logging ? ['query'] : [],
+  //       });
+  //     } catch (error) {
+  //       if (tryCount < config.prisma.maxTries) {
+  //         Logger.log("Couldn't connect to the datbase, retrying.");
+  //         await config.prisma.createInstance(++tryCount);
+  //       } else {
+  //         Logger.log(error);
+  //         throw new Error(
+  //           `Couldn't connect to the database and gave up after ${config.prisma.maxTries} tries.`
+  //         );
+  //       }
+  //     }
+  //   },
+  // },
+  redis: {
+    host: process.env['REDIS_HOST'],
+    username: process.env['REDIS_USER'],
+    password: process.env['REDIS_PASSWORD'],
+    port: +process.env['REDIS_PORT'] || 6379,
+    cacheTime: +process.env['REDIS_CACHE_TIME'] || 60 * 60 * 24,
+    instance: null as RedisClient,
     maxTries: 5,
     createInstance: async (tryCount = 1) => {
-      console.log(
-        "Trying to connect to the database. Connection counter: ",
-        tryCount
-      );
+      Logger.log('Trying to connect to Redis. Counter: ', tryCount);
       try {
-        const instance = new MongoDBService();
-        config.mongodb.instance = await instance.connect();
+        config.redis.instance = new RedisClient(
+          config.redis.cacheTime,
+          config.redis.host,
+          config.redis.port,
+          config.redis.maxTries,
+          'gap-indexer-cache:'
+        );
       } catch (error) {
-        if (tryCount < config.mongodb.maxTries) {
-          console.log("Couldn't connect to the datbase, retrying.");
-          await config.mongodb.createInstance(++tryCount);
+        if (tryCount < config.redis.maxTries) {
+          Logger.log("Couldn't connect to the datbase, retrying.");
+          await config.redis.createInstance(++tryCount);
         } else {
-          console.log(error);
+          Logger.log(error);
           throw new Error(
-            `Couldn't connect to the database and gave up after ${config.mongodb.maxTries} tries.`
+            `Couldn't connect to redis and gave up after ${config.redis.maxTries} tries.`
           );
         }
         return;
@@ -46,27 +78,21 @@ const config = {
     },
   },
   server: {
-    port: process.env["SERVER_PORT"],
-  },
-  jwt: {
-    secret: process.env["JWT_SECRET"],
+    port: process.env['SERVER_PORT'],
   },
   mailer: {
-    apiKey: process.env["EMAIL_SERVICE_API_KEY"],
-    domain: process.env["EMAIL_SERVICE_DOMAIN"],
+    apiKey: process.env['EMAIL_SERVICE_API_KEY'],
+    domain: process.env['EMAIL_SERVICE_DOMAIN'],
   },
-  route: (method: "jwt" | "token", permission?: string | number) => {
-    return {
-      schema: {
-        properties: {
-          protected: {
-            method,
-            permission: permission || 1,
-          },
-        },
-      },
-    };
+  discord: {
+    webhookUrl: null,
   },
+  appUrl:
+    process.env.NODE_ENV === 'production'
+      ? 'https://gap.karmahq.xyz'
+      : 'https://gapstag.karmahq.xyz',
 };
 
-export { config };
+type Config = typeof config;
+
+export { config, Config };

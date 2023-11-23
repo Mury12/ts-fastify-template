@@ -1,14 +1,15 @@
-import { create, update, remove, getAll, get } from "./example";
+import { FastifyInstance } from 'fastify';
+import { Module } from './example.module';
 
 /**
  * Exports the users actions routes.
  * @param {*} router
  * @param {*} options
  */
-export const example = async (router, options) => {
-  router.get("/:id", get);
-  router.put("/:id", update);
-  router.delete("/:id", remove);
-  router.post("/", create);
-  router.get("/", getAll);
+export const example = async (router: FastifyInstance) => {
+  router.get('/:id', Module.get);
+  router.put('/:id', Module.update);
+  router.delete('/:id', Module.remove);
+  router.post('/', Module.create);
+  router.get('/', Module.getAll);
 };

@@ -10,7 +10,7 @@ import { log } from "./logger";
 export function routes(app: any): Array<Promise<any>> {
   // Register routes here
   return [
-    app.register(log, { prefix: "ws/v2/log" }),
-    app.register(example, { prefix: "ws/v2/example" }),
+    app.register(log, { prefix: "_/log" }),
+    app.register(example, { prefix: "example" }),
   ];
 }
