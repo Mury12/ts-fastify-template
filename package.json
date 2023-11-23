@@ -1,6 +1,6 @@
 {
   "name": "webservice-wsrv01",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "main": "./app/server.ts",
   "scripts": {
     "dev": "NODE_ENV=development nodemon -r ./app/server.ts ",
