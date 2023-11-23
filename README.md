@@ -1,4 +1,4 @@
-# Karma GAP Indexer
+# TS Fastify Template
 
 > Required NodeJS@^16.0
 
@@ -7,6 +7,7 @@
 1. `cp .env-example .env` and fill necessary params
 2. `npm install` or `yarn`
 3. `npm run dev` or `yarn dev`
+4. Check running at localhost:3001/health
 
 Production build uses `yarn prod`, compiles to `.dist`
 
