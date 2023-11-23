@@ -1,9 +1,0 @@
-FROM node:14.16.0
-
-WORKDIR /app
-
-COPY . .
-RUN npm install -g nodemon ts-node typescript
-RUN npm install
-
-EXPOSE 3001

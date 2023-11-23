@@ -2,21 +2,20 @@
 version: "2"
 
 services:
-  mongo:
-    image: mongo
-    restart: always
-    container_name: mongodb
-    ports:
-        - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+  # redis:
+  #   image: redis
+  #   container_name: redis-karma-gap-indexer
+  #   ports:
+  #     - '6379:6379'
+  #   volumes:
+  #     - '/data:/etc/redis/data'
+  #   command: redis-server --appendonly yes & chmod 777 -rf /etc/redis/data
 
   app:
-    build: 
+    build:
       context: .
-      dockerfile: Dockerfile.dev
-    container_name: wsvc-mongod
+      dockerfile: Dockerfile
+    container_name: karma-gap-indexer
     ports:
       - "3001:3001"
-    command: npm start
+    command: yarn prod
